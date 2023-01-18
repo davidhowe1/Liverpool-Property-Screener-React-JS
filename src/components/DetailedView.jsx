@@ -4,7 +4,7 @@ import { BiBed, BiBath, BiHome } from "react-icons/bi";
 export default function DetailedView ({ detailedViewIsHidden, renderDetailedView, detailedView }) {
   return (
 
-    detailedView.map((house) => (
+    detailedView.map(house => (
         <div key={house.index} className={renderDetailedView ? 'detailed-view' : 'detailed-view hidden'}>
             <div className='detailed-view-image'>
                 <img src={house.image} alt="" />
@@ -15,7 +15,7 @@ export default function DetailedView ({ detailedViewIsHidden, renderDetailedView
                     <h1>{house.address}</h1>
 
                     <div className='detailed-view-property-details'>
-                        <h1>£{house.price.toLocaleString()}</h1>
+                        <h1>£{house.price}</h1>
 
                         <div className='property-details'>
                             <span><BiHome />{house.type}</span>
@@ -40,7 +40,7 @@ export default function DetailedView ({ detailedViewIsHidden, renderDetailedView
                     <div>
                         <button onClick={detailedViewIsHidden} className='close-detailed-view'>Close</button>
 
-                        <a href={house.propertyLink} target='_blank'>
+                        <a href={house.propertyLink} target='_blank' rel="noreferrer">
                             <button className='view-property'>Visit Property Link</button>
                         </a>
                     </div>

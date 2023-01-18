@@ -9,6 +9,8 @@ import BookmarkAlert from './components/BookmarkAlert';
 import DetailedView from './components/DetailedView';
 import { propertyListings } from './data/propertylistings';
 import { BiXCircle } from 'react-icons/bi'
+import LoadingScreen from './components/LoadingScreen';
+import NewListingForm from './components/NewListingForm';
 
 function App() {
 
@@ -19,6 +21,15 @@ function App() {
   // Filtering Options
 
   const [properties, setProperties] = useState(propertyListings)
+
+  // useEffect(() => {
+  //     const propertiesInLocalStorage = 
+  //   JSON.parse(localStorage.getItem('updated-properties'))
+  //     if (propertiesInLocalStorage) {
+  //       setProperties(propertiesInLocalStorage)
+  //     }
+  // }, [])
+
   const [newHomes, setNewHomes] = useState(false)
   const [recent, setRecent] = useState(false)
   const [apartments, setApartments] = useState(false)
@@ -33,24 +44,10 @@ function App() {
   const handleCardView = () => setCardView(!cardView)
 
   const [sortByPrice, setSortByPrice] = useState(null)
-  const sortPriceAscending = () => setSortByPrice(true)
-  const sortPriceDescending = () => setSortByPrice(false)
-
-  const [sortByBedrooms, setSortByBedrooms] = useState(null)
-  const sortBedroomsAscending = () => setSortByBedrooms(true)
-  const sortBedroomsDescending = () => setSortByBedrooms(false)
-  
+  const [sortByBedrooms, setSortByBedrooms] = useState(null)    
   const [sortByBathrooms, setSortByBathrooms] = useState(null)
-  const sortBathroomsAscending = () => setSortByBathrooms(true)
-  const sortBathroomsDescending = () => setSortByBathrooms(false)
 
-  useEffect(() => {
-    setSortByPrice()
-    setSortByBedrooms()
-    setSortByBathrooms()
-  }, [sortByPrice, sortByBedrooms, sortByBathrooms]) 
-
-  const resetSortingOptions = () => {
+  const setSortingToNull = () => {
     setSortByPrice(null)
     setSortByBedrooms(null)
     setSortByBathrooms(null)
@@ -66,37 +63,13 @@ function App() {
     setTwoBed(false)
     setThreeBed(false)
     setFourBedPlus(false)
-    setHasRun(false);
-  }
-
-  const toggleFilterByNew = () => {
-    setNewHomes(((prevState) => !prevState))
-    filter()
-  }
-
-  const toggleRecentlyAdded = () => {
-    setRecent(((prevState) => !prevState))
-    filter()
-  }
-
-  const toggleApartments = () => {
-    setApartments(((prevState) => !prevState))
-    filter()
-  }
-
-  const toggleTwoBed = () => {
-    setTwoBed(((prevState) => !prevState))
-    filter()
-  }
-
-  const toggleThreeBed = () => {
-    setThreeBed(((prevState) => !prevState))
-    filter()
-  }
-
-  const toggleFourBedPlus = () => {
-    setFourBedPlus(((prevState) => !prevState))
-    filter()
+    setHasRun(false)
+    setSortingToNull()
+  }  
+  
+  const toggleFilter = (variable, setVariable) => {
+    setVariable((prevState) => !prevState)
+    setSortingToNull()
   }
 
   const priceSelector = (event, value) => {
@@ -135,6 +108,11 @@ function App() {
     if (value) {
       updatedCards = updatedCards.filter(house => parseInt(house.price) <= parseInt(value))
     }
+
+    if (!newHomes && !recent && !apartments && !twoBed
+      && !threeBed && !fourBedPlus && !value) {
+        setProperties(updatedCards)
+      }
     
     setProperties(updatedCards)
     setHasRun(false);
@@ -148,7 +126,7 @@ function App() {
       twoBed,
       threeBed, 
       fourBedPlus, 
-      value,]
+      value]
   )
 
   // Bookmarks
@@ -309,6 +287,12 @@ function App() {
     const [sortingOptions, setSortingOptions] = useState(false)
     const toggleSortingOptions = () => setSortingOptions(!sortingOptions)
 
+    // New Listing
+
+    const [newListingForm, setNewListingForm] = useState(false)
+    const handleNewListingForm = () => setNewListingForm(true)
+    const closeNewListingForm = () => setNewListingForm(false)
+
   return (
     <div className={`App ${theme}`}>
 
@@ -324,10 +308,19 @@ function App() {
         detailedViewIsHidden={detailedViewIsHidden}
       />
 
+      <NewListingForm
+        closeNewListingForm={closeNewListingForm}
+        newListingForm={newListingForm}
+        propertyListings={propertyListings}
+        properties={properties}
+        setProperties={setProperties}
+      />
+
       <div className='main-body'>
+        <LoadingScreen />
 
         <div className={
-          renderDetailedView || bookmarksBar || mobileMenu 
+          renderDetailedView || bookmarksBar || mobileMenu || newListingForm
           ? 'dim-background' : 'dim-background hidden'}
           onClick={closeMenusOnClick}
           >
@@ -335,21 +328,22 @@ function App() {
 
         <Sidepanel 
           setSearchQuery={setSearchQuery}
-          allProperties={setAllProperties}
-          recentlyAdded={toggleRecentlyAdded}
-          filterByNew={toggleFilterByNew}
-          apartments={toggleApartments}
-          twoBed={toggleTwoBed}
-          threeBed={toggleThreeBed}
-          fourPlusBed={toggleFourBedPlus}
+          toggleFilter={toggleFilter}
+          setAllProperties={setAllProperties}
+          setRecent={setRecent}
+          setNewHomes={setNewHomes}
+          setApartments={setApartments}
+          setTwoBed={setTwoBed}
+          setThreeBed={setThreeBed}
+          setFourBedPlus={setFourBedPlus}
           priceSelector={priceSelector}
 
           value={value}
-          newHome={newHomes}
+          newHomes={newHomes}
           recent={recent}
-          apartment={apartments}
-          twoBeds={twoBed}
-          threeBeds={threeBed}
+          apartments={apartments}
+          twoBed={twoBed}
+          threeBed={threeBed}
           fourBedsPlus={fourBedPlus}
           mobileMenu={mobileMenu}
 
@@ -363,23 +357,22 @@ function App() {
         <div className='container'>
           <Toolbar 
             handleCardView={handleCardView}
-            sortPriceAscending={sortPriceAscending}
-            sortPriceDescending={sortPriceDescending}
-            sortBedroomsAscending={sortBedroomsAscending}
-            sortBedroomsDescending={sortBedroomsDescending}
-            sortBathroomsAscending={sortBathroomsAscending}
-            sortBathroomsDescending={sortBathroomsDescending}
-            resetSortingOptions={resetSortingOptions}
             toggleMobileMenu={toggleMobileMenu}
             toggleSortingOptions={toggleSortingOptions}
             setSearchQuery={setSearchQuery}
+            handleNewListingForm={handleNewListingForm}
+            setProperties={setProperties}
+            setSortByPrice={setSortByPrice}
+            setSortByBedrooms={setSortByBedrooms}
+            setSortByBathrooms={setSortByBathrooms}
 
             cardView={cardView}
+            properties={properties}
+            mobileMenu={mobileMenu}
+            sortingOptions={sortingOptions}
             sortByPrice={sortByPrice}
             sortByBedrooms={sortByBedrooms}
             sortByBathrooms={sortByBathrooms}
-            mobileMenu={mobileMenu}
-            sortingOptions={sortingOptions}
           />
 
           <div className='content-container'>
@@ -387,9 +380,6 @@ function App() {
               searchQuery={searchQuery}
               cardView={cardView}
               properties={properties}
-              sortByPrice={sortByPrice}
-              sortByBedrooms={sortByBedrooms}
-              sortByBathrooms={sortByBathrooms}
               createBookmark={createBookmark}
               handleBookmarkAlert={handleBookmarkAlert}
               showDetailedCardView={showDetailedCardView}

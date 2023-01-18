@@ -1,6 +1,6 @@
 import React from 'react'
 import { BiBed, BiBath, BiHome } from "react-icons/bi";
-import { TrashFill } from 'react-bootstrap-icons';
+import { House, TrashFill } from 'react-bootstrap-icons';
 
 export default function BookmarksBar ({ bookmarks, removeBookmark, showDetailedCardView }) {
   return (

@@ -5,10 +5,9 @@ import Priceslider from './Priceslider';
 import { CheckCircleFill, InfoCircle } from 'react-bootstrap-icons';
 import { HousesFill, ClockFill, Stars, Buildings, HouseFill, GraphDownArrow, BookmarkCheckFill, SunFill, MoonFill } from 'react-bootstrap-icons';
 
-export default function sidepanel ({ setSearchQuery, allProperties, 
-  recentlyAdded, apartments, twoBed, threeBed, 
-  fourPlusBed, value, priceSelector, filterByNew, newHome,
-  recent, apartment, twoBeds, threeBeds, fourBedsPlus, toggleBookmarksBar, 
+export default function sidepanel ({ setSearchQuery, toggleFilter, setAllProperties, setRecent, 
+  setNewHomes, setApartments, setTwoBed, setThreeBed, setFourBedPlus, value, priceSelector, newHomes,
+  recent, apartments, twoBed, threeBed, fourBedsPlus, toggleBookmarksBar, 
   bookmarkTotal, calculateBelowMarketValue, toggleTheme, theme, mobileMenu}) {
 
   return (
@@ -20,31 +19,31 @@ export default function sidepanel ({ setSearchQuery, allProperties,
       <div className='filtering-options'>
         <h3>Quick Filters</h3>
         <ul>
-            <li onClick={allProperties}>
+            <li onClick={() => setAllProperties()}>
               <p><HousesFill />All Properties</p>
               </li>
 
-            <li onClick={recentlyAdded}>
+            <li onClick={() => toggleFilter(recent, setRecent)}>
               <p><ClockFill />Recently Added</p>
             <div>{recent ? <CheckCircleFill /> : ''}</div></li>
 
-            <li onClick={filterByNew}>
+            <li onClick={() => toggleFilter(newHomes, setNewHomes)}>
               <p><Stars />New Homes</p>
-            <div>{newHome ? <CheckCircleFill /> : ''}</div></li>
+            <div>{newHomes ? <CheckCircleFill /> : ''}</div></li>
 
-            <li onClick={apartments}>
+            <li onClick={() => toggleFilter(apartments, setApartments)}>
               <p><Buildings />Apartments</p>
-            <div>{apartment ? <CheckCircleFill /> : ''}</div></li>
+            <div>{apartments ? <CheckCircleFill /> : ''}</div></li>
 
-            <li onClick={twoBed}>
+            <li onClick={() => toggleFilter(twoBed, setTwoBed)}>
               <p><HouseFill />2 Bedrooms</p>
-            <div>{twoBeds ? <CheckCircleFill /> : ''}</div></li>
+            <div>{twoBed ? <CheckCircleFill /> : ''}</div></li>
 
-            <li onClick={threeBed}>
+            <li onClick={() => toggleFilter(threeBed, setThreeBed)}>
               <p><HouseFill />3 Bedrooms</p>
-            <div>{threeBeds ? <CheckCircleFill /> : ''}</div></li>
+            <div>{threeBed ? <CheckCircleFill /> : ''}</div></li>
 
-            <li onClick={fourPlusBed}>
+            <li onClick={() => toggleFilter(fourBedsPlus, setFourBedPlus)}>
               <p><HouseFill />4+ Bedrooms</p>
             <div>{fourBedsPlus ? <CheckCircleFill /> : ''}</div></li>
         </ul>
@@ -57,7 +56,7 @@ export default function sidepanel ({ setSearchQuery, allProperties,
         </div>
 
         <ul>
-          <li onClick={calculateBelowMarketValue}>
+          <li onClick={() => calculateBelowMarketValue()}>
             <p><GraphDownArrow />Below Market Value</p>
               <Tooltip title={<p style={{ fontSize: '1rem' }}>Click this button to show
                the properties that are below the average price of all the properties on show.</p>}
@@ -66,12 +65,12 @@ export default function sidepanel ({ setSearchQuery, allProperties,
               </Tooltip>
           </li>
 
-          <li onClick={toggleBookmarksBar}>
+          <li onClick={() => toggleBookmarksBar()}>
             <p><BookmarkCheckFill />Bookmarks</p>
             <p className='total'>{bookmarkTotal}</p>
           </li>
 
-          <li onClick={toggleTheme}>
+          <li onClick={() => toggleTheme()}>
             <p>{theme === 'light' ? <MoonFill /> : <SunFill />}Toggle Theme</p>
           </li>
         </ul>
